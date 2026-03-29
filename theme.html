@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Song Ticker</title>
+  <title>VTC Now Playing</title>
   <style>
     html, body {
       margin: 0;
@@ -18,27 +18,57 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: transparent;
+      background: rgba(0, 0, 0, 0.88);
       display: flex;
       align-items: center;
+      box-sizing: border-box;
+      padding: 0 12px;
     }
 
     .ticker-track {
-      width: 100%;
-      overflow: hidden;
+      display: flex;
+      align-items: center;
       white-space: nowrap;
+      will-change: transform;
+      animation: marquee 26s linear infinite;
     }
 
-    .ticker {
-      display: inline-block;
-      white-space: nowrap;
-      color: white;
-      font-size: 34px;
+    .ticker-item {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      color: #d7d7d7;
+      font-size: 24px;
       font-weight: 700;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
-      padding-left: 100%;
-      will-change: transform;
-      animation: marquee 14s linear infinite;
+      margin-right: 140px;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.85);
+      letter-spacing: 0.2px;
+    }
+
+    .dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      border: 2px solid #6d28ff;
+      border-radius: 50%;
+      color: #6d28ff;
+      font-size: 11px;
+      line-height: 1;
+      box-sizing: border-box;
+    }
+
+    .title {
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .meta {
+      color: #bdbdbd;
+      font-weight: 600;
+      margin-left: 12px;
     }
 
     @keyframes marquee {
@@ -46,7 +76,7 @@
         transform: translateX(0);
       }
       to {
-        transform: translateX(-100%);
+        transform: translateX(-50%);
       }
     }
 
@@ -57,29 +87,72 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="ticker-track">
-      <div id="ticker" class="ticker hidden"></div>
-    </div>
+    <div id="tickerTrack" class="ticker-track hidden"></div>
   </div>
 
   <script>
-    const ticker = document.getElementById("ticker");
-    const eventSource = new EventSource('/api/stream');
+    const tickerTrack = document.getElementById("tickerTrack");
+    const eventSource = new EventSource("/api/stream");
 
-    eventSource.addEventListener('track', (event) => {
+    function buildText(track) {
+      const title = track.title || "";
+      const artist = track.artist ? `Artist: ${track.artist}` : "";
+      return { title, artist };
+    }
+
+    function createItem(track) {
+      const { title, artist } = buildText(track);
+
+      const item = document.createElement("div");
+      item.className = "ticker-item";
+
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.textContent = "◉";
+
+      const titleSpan = document.createElement("span");
+      titleSpan.className = "title";
+      titleSpan.textContent = title;
+
+      item.appendChild(dot);
+      item.appendChild(titleSpan);
+
+      if (artist) {
+        const metaSpan = document.createElement("span");
+        metaSpan.className = "meta";
+        metaSpan.textContent = artist;
+        item.appendChild(metaSpan);
+      }
+
+      return item;
+    }
+
+    function buildTicker(track) {
+      tickerTrack.innerHTML = "";
+
+      for (let i = 0; i < 6; i++) {
+        tickerTrack.appendChild(createItem(track));
+      }
+      for (let i = 0; i < 6; i++) {
+        tickerTrack.appendChild(createItem(track));
+      }
+
+      tickerTrack.classList.remove("hidden");
+
+      tickerTrack.style.animation = "none";
+      void tickerTrack.offsetWidth;
+      tickerTrack.style.animation = "marquee 26s linear infinite";
+    }
+
+    eventSource.addEventListener("track", (event) => {
       const track = JSON.parse(event.data);
 
       if (!track || !track.title || track.playing === false) {
-        ticker.classList.add('hidden');
+        tickerTrack.classList.add("hidden");
         return;
       }
 
-      ticker.textContent = track.title;
-      ticker.classList.remove('hidden');
-
-      ticker.style.animation = 'none';
-      void ticker.offsetWidth;
-      ticker.style.animation = 'marquee 14s linear infinite';
+      buildTicker(track);
     });
   </script>
 </body>
