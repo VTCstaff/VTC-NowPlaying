@@ -1,0 +1,7 @@
+{
+  "name": "orpheus-song-ticker",
+  "version": "1.0.0",
+  "displayName": "Song Ticker",
+  "description": "Title-only scrolling ticker theme for Orpheus",
+  "author": "VTC"
+}
