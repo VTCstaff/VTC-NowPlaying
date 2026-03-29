@@ -29,8 +29,18 @@
       display: flex;
       align-items: center;
       white-space: nowrap;
-      will-change: transform;
+      will-change: transform, opacity;
       animation: marquee 60s linear infinite;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+    }
+
+    .ticker-track.fade-out {
+      opacity: 0;
+    }
+
+    .ticker-track.fade-in {
+      opacity: 1;
     }
 
     .ticker-item {
@@ -46,8 +56,8 @@
     }
 
     .dot {
-      width: 25px;
-      height: 25px;
+      width: 18px;
+      height: 18px;
       margin-right: 10px;
       flex-shrink: 0;
       display: block;
@@ -86,6 +96,7 @@
   <script>
     const tickerTrack = document.getElementById("tickerTrack");
     const eventSource = new EventSource("/api/stream");
+    let currentTrackKey = "";
 
     function buildText(track) {
       const title = track.title || "";
@@ -131,7 +142,7 @@
       return item;
     }
 
-    function buildTicker(track) {
+    function fillTicker(track) {
       tickerTrack.innerHTML = "";
 
       for (let i = 0; i < 5; i++) {
@@ -142,22 +153,51 @@
         tickerTrack.appendChild(createItem(track));
       }
 
-      tickerTrack.classList.remove("hidden");
-
       tickerTrack.style.animation = "none";
       void tickerTrack.offsetWidth;
       tickerTrack.style.animation = "marquee 60s linear infinite";
+    }
+
+    function showTrack(track) {
+      const newTrackKey = `${track.title || ""}__${track.artist || ""}`;
+
+      if (newTrackKey === currentTrackKey) {
+        return;
+      }
+
+      currentTrackKey = newTrackKey;
+      tickerTrack.classList.remove("hidden");
+      tickerTrack.classList.remove("fade-in");
+      tickerTrack.classList.add("fade-out");
+
+      setTimeout(() => {
+        fillTicker(track);
+        tickerTrack.classList.remove("fade-out");
+        tickerTrack.classList.add("fade-in");
+      }, 800);
+    }
+
+    function hideTrack() {
+      tickerTrack.classList.remove("fade-in");
+      tickerTrack.classList.add("fade-out");
+
+      setTimeout(() => {
+        tickerTrack.classList.add("hidden");
+        tickerTrack.classList.remove("fade-out");
+        tickerTrack.innerHTML = "";
+        currentTrackKey = "";
+      }, 800);
     }
 
     eventSource.addEventListener("track", (event) => {
       const track = JSON.parse(event.data);
 
       if (!track || !track.title || track.playing === false) {
-        tickerTrack.classList.add("hidden");
+        hideTrack();
         return;
       }
 
-      buildTicker(track);
+      showTrack(track);
     });
   </script>
 </body>
