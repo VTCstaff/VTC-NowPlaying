@@ -45,20 +45,17 @@
       letter-spacing: 0.2px;
     }
 
-    .dot {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 18px;
-      margin-right: 10px;
-      border: 2px solid #6d28ff;
-      border-radius: 50%;
-      color: #6d28ff;
-      font-size: 11px;
-      line-height: 1;
-      box-sizing: border-box;
-    }
+.dot {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  background-image: url("./play.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
 
     .title {
       color: #ffffff;
@@ -101,21 +98,8 @@
     }
 
     function createItem(track) {
-      const { title, artist } = buildText(track);
-
-      const item = document.createElement("div");
-      item.className = "ticker-item";
-
-      const dot = document.createElement("span");
-      dot.className = "dot";
-      dot.textContent = "◉";
-
-      const titleSpan = document.createElement("span");
-      titleSpan.className = "title";
-      titleSpan.textContent = title;
-
-      item.appendChild(dot);
-      item.appendChild(titleSpan);
+const dot = document.createElement("span");
+dot.className = "dot";
 
       if (artist) {
         const metaSpan = document.createElement("span");
