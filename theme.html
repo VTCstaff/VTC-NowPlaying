@@ -30,7 +30,7 @@
       align-items: center;
       white-space: nowrap;
       will-change: transform;
-      animation: marquee 80s linear infinite;
+      animation: marquee 60s linear infinite;
     }
 
     .ticker-item {
@@ -40,22 +40,22 @@
       color: #d7d7d7;
       font-size: 22px;
       font-weight: 700;
-      margin-right: 260px;
+      margin-right: 320px;
       text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
       letter-spacing: 0.2px;
     }
 
-.dot {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 10px;
-  background-image: url("./play.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  flex-shrink: 0;
-}
+    .dot {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      background-image: url("./play.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+    }
 
     .title {
       color: #ffffff;
@@ -98,8 +98,20 @@
     }
 
     function createItem(track) {
-const dot = document.createElement("span");
-dot.className = "dot";
+      const { title, artist } = buildText(track);
+
+      const item = document.createElement("div");
+      item.className = "ticker-item";
+
+      const dot = document.createElement("span");
+      dot.className = "dot";
+
+      const titleSpan = document.createElement("span");
+      titleSpan.className = "title";
+      titleSpan.textContent = title;
+
+      item.appendChild(dot);
+      item.appendChild(titleSpan);
 
       if (artist) {
         const metaSpan = document.createElement("span");
@@ -117,6 +129,7 @@ dot.className = "dot";
       for (let i = 0; i < 5; i++) {
         tickerTrack.appendChild(createItem(track));
       }
+
       for (let i = 0; i < 5; i++) {
         tickerTrack.appendChild(createItem(track));
       }
@@ -125,7 +138,7 @@ dot.className = "dot";
 
       tickerTrack.style.animation = "none";
       void tickerTrack.offsetWidth;
-      tickerTrack.style.animation = "marquee 80s linear infinite";
+      tickerTrack.style.animation = "marquee 60s linear infinite";
     }
 
     eventSource.addEventListener("track", (event) => {
