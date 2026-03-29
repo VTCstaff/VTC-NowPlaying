@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: rgba(0, 0, 0, 0.88);
+      background: transparent;
       display: flex;
       align-items: center;
       box-sizing: border-box;
@@ -30,7 +30,7 @@
       align-items: center;
       white-space: nowrap;
       will-change: transform;
-      animation: marquee 26s linear infinite;
+      animation: marquee 42s linear infinite;
     }
 
     .ticker-item {
@@ -38,10 +38,10 @@
       display: flex;
       align-items: center;
       color: #d7d7d7;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
-      margin-right: 140px;
-      text-shadow: 0 0 6px rgba(0, 0, 0, 0.85);
+      margin-right: 260px;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
       letter-spacing: 0.2px;
     }
 
@@ -68,7 +68,7 @@
     .meta {
       color: #bdbdbd;
       font-weight: 600;
-      margin-left: 12px;
+      margin-left: 14px;
     }
 
     @keyframes marquee {
@@ -130,10 +130,10 @@
     function buildTicker(track) {
       tickerTrack.innerHTML = "";
 
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 5; i++) {
         tickerTrack.appendChild(createItem(track));
       }
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 5; i++) {
         tickerTrack.appendChild(createItem(track));
       }
 
@@ -141,7 +141,7 @@
 
       tickerTrack.style.animation = "none";
       void tickerTrack.offsetWidth;
-      tickerTrack.style.animation = "marquee 26s linear infinite";
+      tickerTrack.style.animation = "marquee 42s linear infinite";
     }
 
     eventSource.addEventListener("track", (event) => {
