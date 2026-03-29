@@ -46,15 +46,11 @@
     }
 
     .dot {
-      display: inline-block;
       width: 18px;
       height: 18px;
       margin-right: 10px;
-      background-image: url("./play.png");
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
       flex-shrink: 0;
+      display: block;
     }
 
     .title {
@@ -97,14 +93,26 @@
       return { title, artist };
     }
 
+    function createPlayIcon() {
+      const img = document.createElement("img");
+      img.className = "dot";
+      img.alt = "play";
+      img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#E7D78A" stroke-width="2.5"/>
+          <path d="M10 8.5L16 12L10 15.5V8.5Z" fill="#E7D78A"/>
+        </svg>
+      `);
+      return img;
+    }
+
     function createItem(track) {
       const { title, artist } = buildText(track);
 
       const item = document.createElement("div");
       item.className = "ticker-item";
 
-      const dot = document.createElement("span");
-      dot.className = "dot";
+      const dot = createPlayIcon();
 
       const titleSpan = document.createElement("span");
       titleSpan.className = "title";
